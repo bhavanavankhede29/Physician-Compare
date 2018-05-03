@@ -1,0 +1,38 @@
+Make Directory: - 
+
+hadoop fs –mkdir /user/training/PhysComp/hive/PhysComp 
+
+Copy File from Local system to Hadoop File system: - 
+
+Hadoop fs –put /home/training/Desktop/Sample.csv /user/training/PhysComp/hive/PhysComp/ 
+
+Data Loaded on HIVE tables: - 
+
+ create table physComp_source (npi    int,    pac_id    int,    prof_enrl_id    string,    l_name    string,    f_name    string,    m_name    string,    sfx    string,    gender    string,    credential    string,    med_schl_nm    string,    grad_year    int,    primary_spcl    string,secondary_spcl1    string,    secondary_spcl2    string,    secondary_spcl3    string,    secondary_spcl4    string,    all_scnd_spcl    string,    org_legal_name    string,    grp_prct_pac_id    int,    no_of_grp_prct_mem    string,    l1_street_addr    string,    l2_street_addr    string,    mrkr_addr_l2    string,    city    string,    state    string,    zip_code    int,    phone_number    int,    hospital_affl_ccn1    string,    hospital_affl_lbn_1    string,    hospital_affl_ccn_2    string,    hospital_affl_lbn_2    string,    hospital_affl_ccn_3    string,    hospital_affl_lbn_3    string,    hospital_affl_ccn_4    string,    hospital_affl_lbn_4    string,    hospital_affl_ccn_5    string,    hospital_affl_lbn_5    string,    acpt_medi_asgn    string,    rep_qlt_msr    string,    used_elct_hlth_rec    string,    million_hearts_initiative    string) COMMENT 'PHYSCOMP Data' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/training/PhysComp/hive/PhysComp/Sample.csv'; 
+ 
+ Create a static table only Specialties for data cleansing as so many random values were populated from source dataset: - 
+ 
+ create table Specialties as select distinct primary_spcl from Physcomp_source  where primary_spcl IN 
+ 
+ ('ADDICTION MEDICINE','ADVANCED HEART FAILURE AND TRANSPLANT CARDIOLOGY', 'ALLERGY/IMMUNOLOGY', 'ANESTHESIOLOGY', 'ANESTHESIOLOGY ASSISTANT', 'AUDIOLOGIST', 'CARDIAC ELECTROPHYSIOLOGY', 'CARDIAC SURGERY', 'CARDIOVASCULAR DISEASE (CARDIOLOGY)', 'CERTIFIED NURSE MIDWIFE', 'CERTIFIED REGISTERED NURSE ANESTHETIST', 'CHIROPRACTIC', 'CLINICAL NURSE SPECIALIST','CLINICAL PSYCHOLOGIST', 'CLINICAL SOCIAL WORKER', 'COLORECTAL SURGERY (PROCTOLOGY)', 'CRITICAL CARE (INTENSIVISTS)', 'DENTIST', 'DERMATOLOGY', 'DIAGNOSTIC RADIOLOGY', 'EMERGENCY MEDICINE', 'ENDOCRINOLOGY', 'FAMILY PRACTICE', 'GASTROENTEROLOGY', 
+ 
+ 'GENERAL PRACTICE', 'GENERAL SURGERY', 'GERIATRIC MEDICINE', 'GERIATRIC PSYCHIATRY', 
+ 
+ 'GYNECOLOGICAL ONCOLOGY', 'HAND SURGERY','HEMATOLOGY','HEMATOLOGY/ONCOLOGY', 
+ 
+ 'HEMATOPOIETIC CELL TRANSPLANTATION AND CELLULAR TH', 'HOSPICE/PALLIATIVE CARE', 
+ 
+ 'HOSPITALIST', 'INFECTIOUS DISEASE', 'INTERNAL MEDICINE','INTERVENTIONAL CARDIOLOGY', 
+ 
+ 'INTERVENTIONAL PAIN MANAGEMENT', 'INTERVENTIONAL RADIOLOGY', 'MASS IMMUNIZATION ROSTER BILLER', 'MAXILLOFACIAL SURGERY', 'MEDICAL ONCOLOGY', 'MEDICAL TOXICOLOGY', 'NEPHROLOGY', 
+ 
+'NEUROLOGY','NEUROPSYCHIATRY','NEUROSURGERY','NUCLEAR MEDICINE','NURSE PRACTITIONER','OBSTETRICS/GYNECOLOGY','OCCUPATIONAL THERAPY','OPHTHALMOLOGY','OPTOMETRY','ORAL SURGERY','ORTHOPEDIC SURGERY','OSTEOPATHIC MANIPULATIVE MEDICINE','OTOLARYNGOLOGY','PAIN MANAGEMENT','PATHOLOGY','PEDIATRIC MEDICINE','PERIPHERAL VASCULAR DISEASE','PHYSICAL MEDICINE AND REHABILITATION','PHYSICAL THERAPY','PHYSICIAN ASSISTANT','PLASTIC AND RECONSTRUCTIVE SURGERY','PODIATRY','PREVENTATIVE MEDICINE','PSYCHIATRY','PULMONARY DISEASE','RADIATION ONCOLOGY','REGISTERED DIETITIAN OR NUTRITION PROFESSIONAL','RHEUMATOLOGY','SLEEP MEDICINE','SPEECH LANGUAGE PATHOLOGIST','SPORTS MEDICINE','SURGICAL ONCOLOGY','THORACIC SURGERY','UROLOGY','VASCULAR SURGERY') 
+
+
+To get Professionals with same specialties with single specialization: - 
+
+select a.prof_enrl_id, a.primary_spcl,count(*) from physcomp_source a join Specialties b on (a.primary_spcl=b.primary_spcl) group by a.prof_enrl_id,a.primary_spcl having count(*) =1;  
+
+To get Professionals with same specialties with multiple specialization: - 
+
+select a.prof_enrl_id, a.primary_spcl,count(*) from physcomp_source a join Specialties b on (a.primary_spcl=b.primary_spcl) group by a.prof_enrl_id,a.primary_spcl having count(*) >1;  

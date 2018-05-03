@@ -1,0 +1,13 @@
+-----------------Static Partition ----------------
+
+create table physcomp_grad_year(npi int,pac_id int,prof_enrl_id  string, l_name string, f_name string, m_name string, sfx  string , gender  string, credential string, med_schl_nm  string  )partitioned by (grad_year int);  
+
+hive> insert into table physcomp_grad_year  partition (grad_year=2009) select npi,pac_id,prof_enrl_id,l_name,f_name,m_name,sfx,gender,credential,med_schl_nm,grad_year from physcomp_source where grad_year =2009 ;  
+
+hive> insert into table physcomp_grad_year  partition (grad_year=2010) select npi,pac_id,prof_enrl_id,l_name,f_name,m_name,sfx,gender,credential,med_schl_nm,grad_year from physcomp_source where grad_year =2010;  
+
+------------ Dynamic Partition---------------
+
+hive> create table physcomp_grad_yr(npi int,pac_id int,prof_enrl_id  string, l_name string, f_name string, m_name string, sfx  string , gender  string, credential string, med_schl_nm  string  ) partitioned by (grad_year int);           
+
+hive> insert into table physcomp_grad_yr partition (grad_year) select npi,pac_id,prof_enrl_id,l_name,f_name,m_name,sfx,gender,credential,med_schl_nm,grad_year from physcomp_grad_year  where grad_year=2009;

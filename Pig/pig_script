@@ -1,0 +1,6 @@
+A = LOAD '/home/training/Desktop/Sample.csv' USING PigStorage(',');
+B = FOREACH A GENERATE $7 AS GENDER;
+C = GROUP B BY GENDER;
+D = FOREACH C  GENERATE COUNT(B.GENDER) AS COUNT;
+STORE D INTO '/home/training/pig/OUTPUT5' USING PigStorage();
+
